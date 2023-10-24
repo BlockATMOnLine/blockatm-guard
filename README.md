@@ -46,7 +46,8 @@ DB_PASSWORD = '123456'
 ### 啟動程序
 
 ```
-python3 app/main.py
+cd app
+python3 main.py
 ```
 
 
