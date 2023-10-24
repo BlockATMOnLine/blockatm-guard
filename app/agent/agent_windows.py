@@ -27,7 +27,7 @@ class AgentMainWindow(QMainWindow,):
         self._port = port
         self._url = f'http://{host}:{port}/index.html'
 
-        self.setWindowTitle('Agent App')
+        self.setWindowTitle('BlockATM-Guard')
         self.resize(1400, 750)
         
         self.setWindowIcon(QtGui.QIcon('./resource/favicon.png'))
