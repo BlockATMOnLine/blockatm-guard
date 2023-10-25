@@ -44,7 +44,9 @@ class CryptoRoute(APIRoute):
         async def custom_route_handler(request: Request) -> Response:
 
             Logger().logger.info("custom_route_handler")
+            Logger().logger.info(f"base_url = {request.base_url}")
             Logger().logger.info(f"url = {request.url}")
+            Logger().logger.info(f"path = {request.url.path}")
 
             if request.method == 'POST' and not hasattr(request, "_body") and request.url.path not in ['/v1/agent/order/upload_order_file']:
                 body = await request.body()
@@ -209,7 +211,7 @@ class AgentServer():
             return self.respond(APIOrderQueryWait.handle_request(), lang)
         
         # 導入訂單excel文件
-        @app.post("/v1/agent/order/upload_order_file", dependencies=[Depends(self.verify_header)], tags=['訂單'], response_model = APIOrderUpload.RespondArgs, summary='導入訂單excel文件')
+        @app.post("/v1/agent/order/upload_order_file", tags=['訂單'], response_model = APIOrderUpload.RespondArgs, summary='導入訂單excel文件')
         def upload_payout_order_file(lang : str = Header(), file: UploadFile = File(...), file_password : str = Form(...)):
             return self.respond(APIOrderUpload.handle_request(file, file_password), lang)
         

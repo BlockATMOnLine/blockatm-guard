@@ -35,10 +35,10 @@ class APIOrderDownloadReport():
                 sql += f' and network = \'{network}\''
             
             if amount_start:
-                sql += f' and amount >= \'{amount_start}\''
+                sql += f' and cast(amount as decimal(18,12)) >= {amount_start}'
             
             if amount_end:
-                sql += f' and amount <= \'{amount_end}\''
+                sql += f' and cast(amount as decimal(18,12)) <= {amount_end}'
             
             if uid:
                 sql += f' and uid = \'{uid}\''

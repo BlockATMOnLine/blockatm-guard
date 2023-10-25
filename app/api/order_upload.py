@@ -8,13 +8,13 @@ import pandas
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from fastapi import UploadFile
+from .base import OrderStatus
 from utils.logger import Logger
-from utils.tool import datetime_object_to_second_timestamp
+from utils.tool import datetime_object_to_second_timestamp, check_amount
+from utils.cache import AppCache
 from db.sqlitedb import SQLiteDB
 from db.table import TableAgentOrder
-from .base import OrderStatus
 from core.exceptions import Exceptions
-from utils.cache import AppCache
 
 # 導入訂單excel文件
 class APIOrderUpload():
@@ -63,7 +63,10 @@ class APIOrderUpload():
                     return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
                 
                 if '|' in upload_order.biz_name+upload_order.order_no+upload_order.uid+upload_order.network+upload_order.wallet_address+upload_order.amount+upload_order.crypto:
-                    return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
+                    return Exceptions.ERR_UPLOAD_VALUES_HAVE_CHAR
+                
+                if check_amount(upload_order.amount):
+                    return Exceptions.ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER
                 
                 res_list = SQLiteDB().query(TableAgentOrder._table_name, filter={'order_no':upload_order.order_no})
                 Logger().logger.info(f'res_list = {res_list}')

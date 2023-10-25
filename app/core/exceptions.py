@@ -37,6 +37,8 @@ class Exceptions():
                                    '上傳訂單有與網絡不匹配的, 請轉換路網後再上傳', '上 传订单有与网络不匹配的，请切换网络后再上传'])
     ERR_UPLOAD_VALUES_HAVE_CHAR = ExValue([318, "The uploaded data contains the '|' character. Please remove it and upload again.", 
                                    "上傳資料包含 '|' 字元, 請移除後重新上傳", "上传资料包含 '|' 字 符, 请移除后重新上传"])
+    ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER = ExValue([319, "The amount field is not a number or floating point number.", 
+                                   "金额字段不是数字或浮点数, 请检查后重新上传", "金額字段不是數字或浮點数, 請檢查後重新上传"])
     ERR_NOT_VERIFY_GOOGLE_AUTH = ExValue([320, 'Please verify with Google Authenticator before proceeding with the upload.', 
                                   '上傳前請先以Google驗證器驗證', '上传前请先以Google验证器验证'])        
     ERR_READ_EXCEL_ERROR = ExValue([321, 'The attempt to read the Excel file has encountered a failure.', '讀取 Excel 檔案失敗', '读取 Excle 文件失败'])

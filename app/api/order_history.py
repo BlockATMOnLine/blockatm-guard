@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import traceback
+from decimal import Decimal
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from utils.logger import Logger
@@ -70,10 +71,10 @@ class APIOrderHistory():
                 sql += f' and network = \'{args.network}\''
             
             if args.amount_start:
-                sql += f' and amount >= \'{args.amount_start}\''
+                sql += f' and cast(amount as decimal(18,12)) >= {args.amount_start}'
             
             if args.amount_end:
-                sql += f' and amount <= \'{args.amount_end}\''
+                sql += f' and cast(amount as decimal(18,12)) <= {args.amount_end}'
             
             if args.uid:
                 sql += f' and uid = \'{args.uid}\''

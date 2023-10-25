@@ -4,6 +4,7 @@ import uuid
 import os
 import platform
 import sys
+from decimal import Decimal
 
 class OSName():
     OS_WINDOWS = "Windows"
@@ -83,3 +84,13 @@ def timestamp_to_datetime_str(timestamp, format = "%d-%m/%Y %H:%M"):
     """
 
     return time.strftime(format, time.localtime(timestamp))
+
+def check_amount(value : str):
+    """
+    檢測金額是否為整形或者浮點型
+    """
+    try:
+        Decimal(value)
+        return True
+    except Exception:
+        return False
