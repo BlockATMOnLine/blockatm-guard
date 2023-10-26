@@ -20,10 +20,10 @@ class APIOrderDownloadReport():
 
             sql = f'''select * from {TableAgentHistoryOrder._table_name} where 1 = 1 '''
             if time_start:
-                sql += f' and order_date > {time_start} '
+                sql += f' and order_date >= {time_start} '
             
             if time_end:
-                sql += f' and order_date < {time_end} '
+                sql += f' and order_date =< {time_end} '
 
             if order_no:
                 sql += f' and order_no = \'{order_no}\''
