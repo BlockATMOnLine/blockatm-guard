@@ -104,4 +104,5 @@ class TableAgentHistoryOrder(TableBase):
     amount : str = None
     uid : str = None
     biz_name : str = None
+    txid : str = None
 

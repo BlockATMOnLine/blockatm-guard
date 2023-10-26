@@ -44,9 +44,7 @@ class CryptoRoute(APIRoute):
         async def custom_route_handler(request: Request) -> Response:
 
             Logger().logger.info("custom_route_handler")
-            Logger().logger.info(f"base_url = {request.base_url}")
             Logger().logger.info(f"url = {request.url}")
-            Logger().logger.info(f"path = {request.url.path}")
 
             if request.method == 'POST' and not hasattr(request, "_body") and request.url.path not in ['/v1/agent/order/upload_order_file']:
                 body = await request.body()

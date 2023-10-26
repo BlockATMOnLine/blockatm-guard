@@ -42,6 +42,7 @@ class APIOrderHistory():
                 amount : str = Field(examples=['33.20'],description='訂單金額')
                 uid : str = Field(examples=['00000012'],description='UID')
                 biz_name : str = Field(examples=['Mpay'],description='業務名稱')
+                txid : str = Field(examples=['fdaf-fdaf'], description='txid')
 
             orders : List[Order] = Field(description='訂單數據')
 

@@ -60,7 +60,7 @@ class APIOrderDownloadReport():
                 return Exceptions.ERR_DB
 
             # 訂單數據
-            execel_data = {"Date of Order":[], "Business":[], "Order No.":[], "UID":[], "Amount":[],
+            execel_data = {"Date of Order":[], "Business":[], "Order No.":[], "TxID":[], "UID":[], "Amount":[],
                            "Token":[], "Wallet Address":[], "Service Fee":[], "Date of Payment":[], "Status":[]}
             for db_res in res_list:
                 table_order = TableAgentHistoryOrder()
@@ -73,6 +73,7 @@ class APIOrderDownloadReport():
                 execel_data['Date of Order'].append(timestamp_to_datetime_str(table_order.order_date, '%d-%m/%Y %H:%M'))
                 execel_data['Business'].append(table_order.biz_name)
                 execel_data['Order No.'].append(table_order.order_no)
+                execel_data['TxID'].append(table_order.txid)
                 execel_data['UID'].append(table_order.uid)
                 execel_data['Amount'].append(table_order.amount)
                 execel_data['Token'].append(table_order.crypto)

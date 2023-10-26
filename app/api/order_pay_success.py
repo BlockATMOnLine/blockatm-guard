@@ -43,6 +43,7 @@ class APIOrderPaySuccess():
                 table_his_order.amount : str = table_order.amount
                 table_his_order.uid : str = table_order.uid
                 table_his_order.biz_name : str = table_order.biz_name
+                table_his_order.txid : str = table_order.txid
 
                 SQLiteDB().insert(TableAgentHistoryOrder._table_name, table_his_order.to_dict())
                 
