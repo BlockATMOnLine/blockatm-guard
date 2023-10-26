@@ -65,7 +65,7 @@ class APIOrderUpload():
                 if '|' in upload_order.biz_name+upload_order.order_no+upload_order.uid+upload_order.network+upload_order.wallet_address+upload_order.amount+upload_order.crypto:
                     return Exceptions.ERR_UPLOAD_VALUES_HAVE_CHAR
                 
-                if check_amount(upload_order.amount):
+                if not check_amount(upload_order.amount):
                     return Exceptions.ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER
                 
                 res_list = SQLiteDB().query(TableAgentOrder._table_name, filter={'order_no':upload_order.order_no})
