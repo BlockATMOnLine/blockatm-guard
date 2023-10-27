@@ -146,5 +146,5 @@ python3 main.py
 ## 頁面截圖
 ![][link_cashier] ![][link_success]
 
-[link_cashier]: image/cashier.png
-[link_success]: image/success.png
+[link_cashier]: image/cashier-en.png
+[link_success]: image/success-en.png
