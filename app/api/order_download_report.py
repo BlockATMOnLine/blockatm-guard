@@ -15,7 +15,7 @@ from utils.tool import timestamp_to_datetime_str, get_run_dir
 class APIOrderDownloadReport():
 
     @staticmethod
-    def handle_request(time_start : int, time_end : int, order_no : str, crypto : str, network : str, amount_start : str, amount_end : str, uid : str, biz_name : str, wallet_address : str):
+    def handle_request(time_start:int, time_end:int, payment_start:int, payment_end:int, order_no:str, crypto:str, network:str, amount_start:str, amount_end:str, uid:str, biz_name:str, wallet_address:str):
         try:
 
             sql = f'''select * from {TableAgentHistoryOrder._table_name} where 1 = 1 '''
@@ -24,6 +24,12 @@ class APIOrderDownloadReport():
             
             if time_end:
                 sql += f' and order_date =< {time_end} '
+
+            if payment_start:
+                sql += f' and finish_date >= {payment_start} '
+            
+            if payment_end:
+                sql += f' and finish_date <= {payment_end} '
 
             if order_no:
                 sql += f' and order_no = \'{order_no}\''

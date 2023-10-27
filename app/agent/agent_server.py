@@ -11,6 +11,7 @@ from utils.crypto_engine import RASEngine
 from core.exceptions import Exceptions, Language
 from core.config import VERSION_TYPE
 from core.setting import VersionType
+from agent.agent_config import LOGGING_CONFIG
 
 import uvicorn
 from fastapi import Depends, FastAPI, Header, Body, UploadFile, File, Form, HTTPException, Response
@@ -88,6 +89,7 @@ class AgentServer():
         else:
             self._app = FastAPI(title = 'Agnet WebServer', description = 'Agnet WebServer 接口文檔', version='v1.0.0')
         
+        Logger().logger.info(f'get_run_dir = {get_run_dir()}')
         self._app.mount("/static", StaticFiles(directory=f"{get_run_dir()}/static"), name="static")
         self._templates = Jinja2Templates(directory=f"{get_run_dir()}/templates")
         self._app.router.route_class = CryptoRoute
@@ -220,8 +222,8 @@ class AgentServer():
         
         # 下載報表
         @app.get("/v1/agent/order/download_order_report", tags=['訂單'], summary='下載訂單報表')
-        def order_download_report(time_start : int, time_end : int, order_no : str, crypto : str, network : str, amount_start : str, amount_end : str, uid : str, biz_name : str, wallet_address : str):
-            return APIOrderDownloadReport.handle_request(time_start, time_end, order_no, crypto, network, amount_start, amount_end, uid, biz_name, wallet_address)
+        def order_download_report(time_start : int, time_end : int, payment_start:int, payment_end:int, order_no : str, crypto : str, network : str, amount_start : str, amount_end : str, uid : str, biz_name : str, wallet_address : str):
+            return APIOrderDownloadReport.handle_request(time_start, time_end, payment_start, payment_end, order_no, crypto, network, amount_start, amount_end, uid, biz_name, wallet_address)
         
         # 查詢登錄日誌
         @app.get("/v1/agent/log/login_log", dependencies=[Depends(self.verify_header)], tags=['日誌'], response_model = APIQueryLoginLog.RespondArgs, summary='查詢登錄日誌')

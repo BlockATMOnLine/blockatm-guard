@@ -24,11 +24,10 @@ class APIOrderDelete():
     @staticmethod
     def handle_request(args : RequestArgs):
         try:
-            # 刪除訂單
+            # 刪除訂單, 物理删除, 删除后可以导入之前删除了的订单号
             for order_no in args.order_no_list:
                 filter = {'order_no' : order_no}
-                field_vaules = {'is_del' : OrderDel.OD_DEL}
-                SQLiteDB().update(TableAgentOrder._table_name, filter, field_vaules)
+                SQLiteDB().delete(TableAgentOrder._table_name, filter)
 
             return Exceptions.ERR_OK
 

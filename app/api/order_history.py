@@ -16,6 +16,8 @@ class APIOrderHistory():
     class RequestArgs(BaseModel):
         time_start : int = Field(examples=[1695815749], description='開始時間，秒級時間戳，沒有填0')
         time_end : int = Field(examples=[1695815749], description='結束時間，秒級時間戳，沒有填0')
+        payment_start : int = Field(examples=[1695815749], description='支付時間，秒級時間戳，沒有填0')
+        payment_end : int = Field(examples=[1695815749], description='支付時間，秒級時間戳，沒有填0')
         order_no : str= Field(examples=['165277554525515'], description='訂單號')
         crypto : str= Field(examples=['USDT'], description='數字幣code')
         network : str = Field(examples=['Ethereum'], description='數字幣網絡')
@@ -61,6 +63,12 @@ class APIOrderHistory():
             
             if args.time_end:
                 sql += f' and order_date <= {args.time_end} '
+
+            if args.payment_start:
+                sql += f' and finish_date >= {args.payment_start} '
+            
+            if args.payment_end:
+                sql += f' and finish_date <= {args.payment_end} '
 
             if args.order_no:
                 sql += f' and order_no = \'{args.order_no}\''

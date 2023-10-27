@@ -28,7 +28,11 @@ class SQLiteDB():
         dbfile = os.path.join(get_run_dir(), self._db_name)
         Logger().logger.info(f'dbfile = {dbfile}')
         conn = sqlite3.connect(dbfile)
-        return conn.execute(sql)
+        cur = conn.execute(sql)
+        conn.commit()
+        res = cur.fetchall()
+        conn.close()
+        return res
             
     def execute_windwos(self, sql):
         try:
@@ -72,7 +76,7 @@ class SQLiteDB():
             if platform.system() == OSName.OS_WINDOWS:
                 return self.execute(sql)
             else:
-                return self.execute(sql).fetchall()
+                return self.execute(sql)
         
         except Exception as err:
             Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
@@ -122,6 +126,9 @@ class SQLiteDB():
         try:
             Logger().logger.info(f'sql = {sql}')
 
+            if sql[-1] != ";":
+                sql += ';'
+
             return self.execute(sql)
         
         except Exception as err:
@@ -141,7 +148,7 @@ class SQLiteDB():
             if vaule_str:
                 vaule_str = vaule_str[:-1]
 
-            sql = f'''insert into {table}({field_str}) values ({vaule_str})'''
+            sql = f'''insert into {table}({field_str}) values ({vaule_str});'''
             #Logger().logger.info(f'sql = {sql}')
             return self.insert_sql(sql)
 
@@ -179,7 +186,6 @@ class SQLiteDB():
                 else:
                     filter_str += f' and {k} = {v}'
 
-            
             #Logger().logger.info(f'sql = {sql}')
             sql = f'''update {table} set {field_vaule_str} where {filter_str}'''
 
@@ -190,8 +196,34 @@ class SQLiteDB():
 
             return False
         
+    # 删除
+    def delete_sql(self, sql : str):
+        try:
+            Logger().logger.debug(f'sql = {sql}')
+            return self.execute(sql)
 
+        except Exception as err:
+            Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+            return False
+    
+    # 删除
+    def delete(self, table : str, filter : dict):
+        try:
+            filter_str = '1 = 1 '
+            
+            for k, v in filter.items():
+                if isinstance(v, str):
+                    filter_str += f' and {k} = \'{v}\''
+                else:
+                    filter_str += f' and {k} = {v}'
 
+            sql = f'delete from {table} where {filter_str}'
+
+            return self.delete_sql(sql)
+        
+        except Exception as err:
+            Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+            return False
 
     
 
