@@ -98,7 +98,7 @@ class APIOrderHistory():
 
             res_list = SQLiteDB().query_sql(sql)
             
-            Logger().logger.error(f'res_list = {res_list}')
+            Logger().logger.debug(f'res_list = {res_list}')
 
             # 校驗數據結果
             if not isinstance(res_list, list):

@@ -37,11 +37,19 @@ class Exceptions():
                                    '上傳訂單有與網絡不匹配的, 請轉換路網後再上傳', '上 传订单有与网络不匹配的，请切换网络后再上传'])
     ERR_UPLOAD_VALUES_HAVE_CHAR = ExValue([318, "The uploaded data contains the '|' character. Please remove it and upload again.", 
                                    "上傳資料包含 '|' 字元, 請移除後重新上傳", "上传资料包含 '|' 字 符, 请移除后重新上传"])
-    ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER = ExValue([319, "The amount field is not a number or floating point number.", 
-                                   "金额字段不是数字或浮点数, 请检查后重新上传", "金額字段不是數字或浮點数, 請檢查後重新上传"])
+    ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER = ExValue([319, "The amount field is not a number or floating point number. Please double-check and re-upload the orders.", 
+                                   "金額字段不是數字或浮點数, 請檢查後重新上传", "金额字段不是数字或浮点数, 请检查后重新上传"])
     ERR_NOT_VERIFY_GOOGLE_AUTH = ExValue([320, 'Please verify with Google Authenticator before proceeding with the upload.', 
                                   '上傳前請先以Google驗證器驗證', '上传前请先以Google验证器验证'])        
     ERR_READ_EXCEL_ERROR = ExValue([321, 'The attempt to read the Excel file has encountered a failure.', '讀取 Excel 檔案失敗', '读取 Excle 文件失败'])
+    ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT = ExValue([322, "The wallet address format is incorrect. Please double-check and re-upload the orders.", 
+                                   "錢包地址格式不正确, 請檢查後重新上传", "钱包地址格式不正确, 请检查后重新上传"])
+    ERR_UPLOAD_VALUES_ORDER_DATE_FORMAT = ExValue([323, "The order date format is incorrect. Please double-check and re-upload the orders.", 
+                                   "訂單日期格式不正确, 請檢查後重新上传", "订单日期格式不正确, 请检查后重新上传"])
+    ERR_EXCEL_PASSWORD = ExValue([324, "The excel file password error. Please enter correct password.", 
+                                   "Excel文件密碼錯误, 請輸入正確的密码", "Excel文件密码错误, 请输入正确的密码"])
+    RR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY = ExValue([325, 'The uploaded order(s) number already exists in history orders. Please double-check and re-upload the orders. ', 
+                                 ' 上傳訂單號已經存在與歷史訂单, 請檢查後重新上傳', '上传订单号已经存在与历史订单, 请检查后重新上传'])
 
     
 

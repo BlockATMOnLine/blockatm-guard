@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
 import io
+import re
 import typing
 import time
 import traceback
 import msoffcrypto
 import pandas
+from msoffcrypto.exceptions import InvalidKeyError
 from typing import Optional, List
 from pydantic import BaseModel, Field
 from fastapi import UploadFile
@@ -13,8 +15,9 @@ from utils.logger import Logger
 from utils.tool import datetime_object_to_second_timestamp, check_amount
 from utils.cache import AppCache
 from db.sqlitedb import SQLiteDB
-from db.table import TableAgentOrder
+from db.table import TableAgentOrder, TableAgentHistoryOrder
 from core.exceptions import Exceptions
+from core.setting import NetWorkType, NetWorkRegular
 
 # 導入訂單excel文件
 class APIOrderUpload():
@@ -50,28 +53,56 @@ class APIOrderUpload():
         try:
             
             # 讀取excel數據
-            upload_order_list : List[TableAgentOrder] = APIOrderUpload.read_excel(file.file, file_password)
+            res = APIOrderUpload.read_excel(file.file, file_password)
 
-            if not isinstance(upload_order_list, list):
+            if not isinstance(res, list):
                 Logger().logger.error('read excel file fail')
+                if res == 1:
+                    return Exceptions.ERR_EXCEL_PASSWORD
+                elif res == 2:
+                    return Exceptions.ERR_READ_EXCEL_ERROR
+                elif res == 3:
+                    return Exceptions.ERR_UPLOAD_VALUES_ORDER_DATE_FORMAT
+                
                 return Exceptions.ERR_READ_EXCEL_ERROR
+            
+            upload_order_list : List[TableAgentOrder] = res
 
             # 檢驗order數據
             for upload_order in upload_order_list:
                 
                 if upload_order.network != AppCache().get_login_network():
+                    Logger().logger.error("order network not match current login network")
                     return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
                 
                 if '|' in upload_order.biz_name+upload_order.order_no+upload_order.uid+upload_order.network+upload_order.wallet_address+upload_order.amount+upload_order.crypto:
+                    Logger().logger.error("uploaded data contains the '|' character")
                     return Exceptions.ERR_UPLOAD_VALUES_HAVE_CHAR
                 
                 if not check_amount(upload_order.amount):
+                    Logger().logger.error('amount field is not a number or floating point number')
                     return Exceptions.ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER
+                
+                # 校驗錢包地址格式
+                if NetWorkType.NWT_ETH == AppCache().get_login_network():
+                    if not re.match(NetWorkRegular.NWR_ETH, upload_order.wallet_address):
+                        Logger().logger.error('wallet address format error')
+                        return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
+                
+                if NetWorkType.NWT_TRON == AppCache().get_login_network():
+                    if not re.match(NetWorkRegular.NWR_TRON, upload_order.wallet_address):
+                        Logger().logger.error('wallet address format error')
+                        return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
                 
                 res_list = SQLiteDB().query(TableAgentOrder._table_name, filter={'order_no':upload_order.order_no})
                 Logger().logger.info(f'res_list = {res_list}')
                 if isinstance(res_list, list) and res_list:
                     return Exceptions.ERR_UPLOAD_ORDER_NO_EXIST
+                
+                res_list = SQLiteDB().query(TableAgentHistoryOrder._table_name, filter={'order_no':upload_order.order_no})
+                Logger().logger.info(f'res_list = {res_list}')
+                if isinstance(res_list, list) and res_list:
+                    return Exceptions.RR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY
                 
             # 保存到數據庫
             respond_order_list = []
@@ -108,7 +139,14 @@ class APIOrderUpload():
             for line in df.values:
                 Logger().logger.info(f'line = {line}')
                 table_order = TableAgentOrder()
-                table_order.order_date = datetime_object_to_second_timestamp(line[0].to_pydatetime())
+                
+                try:
+                    table_order.order_date = datetime_object_to_second_timestamp(line[0].to_pydatetime())
+                except Exception as err:
+                    Logger().logger.error('order_date format error!')
+                    Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+                    return 3
+                
                 table_order.biz_name = str(line[1])
                 table_order.order_no = str(line[2])
                 Logger().logger.info(f'type uid = {type(line[3])}, value = {line[3]}')
@@ -127,7 +165,12 @@ class APIOrderUpload():
                 upload_order_list.append(table_order)
             
             return upload_order_list
-
-        except Exception as err:
+        except InvalidKeyError as err:
+            Logger().logger.error('excel password error!')
             Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+            return 1
+        except Exception as err:
+            Logger().logger.error('read excel error!')
+            Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+            return 2
 
