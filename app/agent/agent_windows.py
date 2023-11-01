@@ -3,8 +3,8 @@ import requests
 import datetime
 from utils.logger import Logger
 from utils.tool import check_free_port
-from PyQt5 import QtGui, QtCore, QtNetwork    # pip3 install PyQt5
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog
+from PyQt5 import QtGui, QtCore    # pip3 install PyQt5
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QFileDialog
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem     # pip install PyQtWebEngine
 from PyQt5.QtCore import pyqtSignal, QObject
 from core.setting import REPORT_EXCEL_FILE_NAME

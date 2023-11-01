@@ -68,10 +68,10 @@ class AgentServer():
 
     def run(self, host : str, port : int, config : dict, process_token : str):
         # 初始化日誌
-        if VERSION_TYPE == VersionType.VT_RELEASE:
-            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
-        else:
-            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='debug')
+        # if VERSION_TYPE == VersionType.VT_RELEASE:
+        #     Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
+        # else:
+        #     Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='debug')
 
         Logger().logger.debug(f'run config = {config}')
 

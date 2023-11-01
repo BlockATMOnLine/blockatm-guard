@@ -23,7 +23,7 @@ class APIOrderDownloadReport():
                 sql += f' and order_date >= {time_start} '
             
             if time_end:
-                sql += f' and order_date =< {time_end} '
+                sql += f' and order_date <= {time_end} '
 
             if payment_start:
                 sql += f' and finish_date >= {payment_start} '

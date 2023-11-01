@@ -1,7 +1,5 @@
 # -*- coding:utf-8 -*-
 import sys
-import os
-import signal
 import time
 import threading
 import json
@@ -9,25 +7,16 @@ import requests
 import yaml
 import traceback
 import uuid
+import webview
 import platform
-import multiprocessing
 from db.sqlitedb import SQLiteDB
 from db.table import TableAgentConfig
 from utils.logger import Logger
-from utils.tool import get_free_port, check_free_port, OSName
+from utils.tool import get_free_port, OSName
 from utils.crypto_engine import AESEngine
 from core.config import VERSION_TYPE
 from core.setting import VersionType
-from PyQt5.QtWidgets import QApplication, QMessageBox
 from agent.agent_server import AgentServer
-from agent.agent_windows import AgentMainWindow
-
-def show_error_windows(title : str, text : str):
-    app = QApplication(sys.argv)
-    #window = QMessageBox.question(None, title, text)
-    window = QMessageBox(text=text)
-    window.show()
-    app.exec()
 
 # 更新檢測
 def check_app_update(host, port, table : TableAgentConfig, process_token : str)->dict:
@@ -89,6 +78,18 @@ def check_app_update(host, port, table : TableAgentConfig, process_token : str)-
 
     except Exception as err:
         Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
+
+# 推送登出
+def push_log_out(host : str, port : int):
+    # 推送登出
+    url = f'http://{host}:{port}/v1/agent/logout'
+    # 本地禁用代理
+    proxies = {
+        "http": "",
+        "https": "",
+    }
+    respond = requests.post(url, proxies=proxies)
+    Logger().logger.info(f'logout respond = {respond.text}')
     
 def main():
     try:
@@ -110,48 +111,40 @@ def main():
         # 讀取數據庫
         data_list : list = SQLiteDB().query_sql('select * from agent_config order by update_time desc limit 1;')
         if not isinstance(data_list, list) or not data_list:
-            show_error_windows('Error', 'Sqlit db config is empty! Please make sure the database file exists!')
-            return
+            Logger().logger.info('Sqlit db config is empty! Please make sure the database file exists!')
             
         table = TableAgentConfig().assignment(data_list[0])
         config = json.loads(table.config)
         
         if not config:
             Logger().logger.error(f'confg is null! close app')
-            return
                 
         Logger().logger.debug(f'config = {config}')
         
         # 啟動server
-        process_server = multiprocessing.Process(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'process_token':process_token})
-        process_server.start()
-
-        #process_server.join()
+        thread_server = threading.Thread(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'process_token':process_token})
+        thread_server.setDaemon(True)
+        thread_server.start()
 
         # 檢測更新
         if VERSION_TYPE == VersionType.VT_RELEASE:
-            thread = threading.Thread(target=check_app_update, args=(host, port, table, process_token))
-            thread.start()
+            thread_update = threading.Thread(target=check_app_update, args=(host, port, table, process_token))
+            thread_update.setDaemon(True)
+            thread_update.start()
         
-        if platform.system() == OSName.OS_WINDOWS:
-            signal_stop = signal.CTRL_C_EVENT
-        else:
-            signal_stop = signal.SIGINFO
+        # mac啟動較慢
+        if platform.system() == OSName.OS_MAC:
+            time.sleep(1)
 
         # 啟動客戶端
         Logger().logger.info('AgentMainWindow start')
-        app = QApplication(sys.argv)
-        window = AgentMainWindow(host=host, port=port)
-        window.show()
-        app.exec()
+        webview.create_window('BlockATM-Guard', f'http://{host}:{port}/index.html', width=1300, height=720, confirm_close=True)
+        webview.start(localization={'global.quitConfirmation': '是否確認關閉?'})
         Logger().logger.info('AgentMainWindow close')
-            
-        # 關閉server
-        os.kill(process_server.pid, signal_stop)
-        time.sleep(2)
-        #process_server.join()
-        process_server.kill()
 
+        # 推送登出
+        push_log_out(host, port)
+        
         Logger().logger.info("blockatm-guard end")
 
     except Exception as err:
@@ -159,5 +152,5 @@ def main():
 
 if __name__ == '__main__':
     # 多進程打包必加
-    multiprocessing.freeze_support()
+    #multiprocessing.freeze_support()
     sys.exit(main())
