@@ -22,6 +22,7 @@ def get_run_dir():
         return '.'
     
     return os.path.dirname(executable_file)
+    #return os.path.join(os.path.dirname(sys.executable), "../../..")
 
 def get_mac_address():
     """

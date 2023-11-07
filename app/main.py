@@ -12,7 +12,7 @@ import platform
 from db.sqlitedb import SQLiteDB
 from db.table import TableAgentConfig
 from utils.logger import Logger
-from utils.tool import get_free_port, OSName
+from utils.tool import get_free_port, OSName, get_run_dir
 from utils.crypto_engine import AESEngine
 from core.config import VERSION_TYPE
 from core.setting import VersionType
@@ -95,9 +95,9 @@ def main():
     try:
         # 初始化日誌
         if VERSION_TYPE == VersionType.VT_RELEASE:
-            Logger().init('blockatm-guard', './logs', level='info')
+            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
         else:
-            Logger().init('blockatm-guard', './logs', level='debug')
+            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='debug')
         
         Logger().logger.info("-----------------------------------------------------------")
         Logger().logger.info("blockatm-guard start")
@@ -138,7 +138,8 @@ def main():
 
         # 啟動客戶端
         Logger().logger.info('AgentMainWindow start')
-        webview.create_window('BlockATM-Guard', f'http://{host}:{port}/index.html', width=1300, height=720, confirm_close=True)
+        #webview.create_window('BlockATM-Guard', f'http://{host}:{port}/index.html', width=1140, height=750, confirm_close=True, min_size = (1140, 750), minimized=True)
+        webview.create_window('BlockATM-Guard', f'http://{host}:{port}/index.html', width=1140, height=750, confirm_close=True, min_size = (1140, 750))
         webview.start(localization={'global.quitConfirmation': '是否確認關閉?'})
         Logger().logger.info('AgentMainWindow close')
 
