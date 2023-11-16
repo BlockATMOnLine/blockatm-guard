@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import base64
 from typing import List, Dict, Tuple, Union
 from Crypto.Cipher import AES

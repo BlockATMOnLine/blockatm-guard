@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import time
 import datetime
 import uuid
@@ -29,9 +30,9 @@ def get_run_dir():
         return '.'
     
     #return os.path.dirname(sys.argv[0]).rsplit('/', 3)[0]
-    #return os.path.abspath(os.path.dirname(__file__).rsplit('/', 1)[0])
+    return os.path.abspath(os.path.dirname(__file__).rsplit('/', 1)[0])
     #return os.path.dirname(sys.executable).rsplit('/', 3)[0]
-    return os.path.dirname(executable_file)
+    #return os.path.dirname(executable_file)
     #return os.path.join(os.path.dirname(sys.executable), "../../..")
 
 def get_mac_address():

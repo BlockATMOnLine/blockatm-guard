@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from Crypto.Cipher import AES
 import base64
 

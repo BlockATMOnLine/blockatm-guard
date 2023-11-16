@@ -35,7 +35,7 @@ def check_app_update(host, port, table : TableAgentConfig, process_token : str)-
     try:
         # 獲取github線上文件數據
         yaml_file = agent_config.get('yaml_file', '')
-        url = f'https://github.com/BlockATMOnLine/desktop-agent-action/raw/main/configurations/{yaml_file}'
+        url = f'https://github.com/BlockATMOnLine/blockatm-guard-action/raw/main/configurations/{yaml_file}'
 
         res = requests.get(url, timeout=(5, 10))
 
@@ -76,6 +76,9 @@ def check_app_update(host, port, table : TableAgentConfig, process_token : str)-
             response = requests.get(url, headers=headers, params=payload, proxies=proxies)
 
             Logger().logger.info(f'response = {response.text}')
+
+        else:
+            Logger().logger.info(f'Already the latest configuration, no need to update!')
 
     except Exception as err:
         Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
