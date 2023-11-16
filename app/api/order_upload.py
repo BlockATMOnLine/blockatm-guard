@@ -102,7 +102,7 @@ class APIOrderUpload():
                 res_list = SQLiteDB().query(TableAgentHistoryOrder._table_name, filter={'order_no':upload_order.order_no})
                 Logger().logger.info(f'res_list = {res_list}')
                 if isinstance(res_list, list) and res_list:
-                    return Exceptions.RR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY
+                    return Exceptions.ERR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY
                 
             # 保存到數據庫
             respond_order_list = []

@@ -3,75 +3,37 @@ import os
 import sqlite3
 import traceback
 import platform
+from db.sqlcrypt import Connection
 from core.config import DB_PASSWORD, VERSION_TYPE
 from core.setting import VersionType
 from typing import Union
 from utils.logger import Logger
 from utils.tool import OSName, get_run_dir
-from subprocess import Popen, PIPE
 
 # 加密數據庫名稱
 encrypt_db_name = 'agentapp_encrypt.db'
 decrypt_db_name = 'agentapp_decrypt.db'
-sqlcipher_shell_exe = 'sqlcipher-shell64.exe'
+# sqlcipher_shell_exe = 'sqlcipher-shell64.exe'
 
 class SQLiteDB():
 
     def __init__(self, secret_key : str = DB_PASSWORD):
         self._secret_key = secret_key
-        if VERSION_TYPE == VersionType.VT_RELEASE and platform.system() == OSName.OS_WINDOWS:
-            self._db_name = encrypt_db_name
-        else:
-            self._db_name = decrypt_db_name
+        self._db_name = encrypt_db_name
 
-    def execute_macos(self, sql):
+    def execute(self, sql : str):
         dbfile = os.path.join(get_run_dir(), self._db_name)
         Logger().logger.info(f'dbfile = {dbfile}')
-        conn = sqlite3.connect(dbfile)
+
+        conn = Connection(dbfile, self._secret_key)
         cur = conn.execute(sql)
-        conn.commit()
         res = cur.fetchall()
         conn.close()
         return res
-            
-    def execute_windwos(self, sql):
-        try:
-            #exe_cmd = "%s %s" % (get_exe_file(), self._db_name)
-            exe_cmd = "%s %s" % (sqlcipher_shell_exe, self._db_name)
-            p1 = Popen(exe_cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
-
-            if VERSION_TYPE == VersionType.VT_RELEASE:
-                cmd_sql = f"PRAGMA key = '{self._secret_key}';{sql};"
-            else:
-                cmd_sql = f"{sql};"
-
-            code, message = p1.communicate(bytes(cmd_sql, encoding='utf-8'))
-            message = message.decode("gbk")
-            Logger().logger.debug(f"code = {code}, message = {message}")
-            if int(p1.poll()) == 0:
-                res = code.decode('utf-8')
-                res = res.strip('\r\n')
-                res = [_ for _ in res.split('\r\n') if _]
-                res = [_.split('|') for _ in res]
-                Logger().logger.info(f"sql execute success")
-                Logger().logger.debug(f"res = {res}")
-                return res
-            else:
-                Logger().logger.error(f"sql execute fail")
-            
-        except Exception as err:
-            Logger().logger.error('{} :{}'.format(err, str(traceback.format_exc())))
-
-    def execute(self, sql : str):
-        if platform.system() == OSName.OS_WINDOWS:
-            return self.execute_windwos(sql)
-        else:
-            return self.execute_macos(sql)
 
     # 查詢
     def query_sql(self, sql : str):
         try:
-            
             Logger().logger.info(f'sql = {sql}')
             if platform.system() == OSName.OS_WINDOWS:
                 return self.execute(sql)

@@ -12,6 +12,13 @@ class OSName():
     OS_LINUX = "Linux"
     OS_OTHER = "Other"
 
+def get_work_dir():
+    os_name = platform.system()
+    if os_name == OSName.OS_WINDOWS:
+        return '.'
+    
+    return os.path.join(os.path.expanduser('~'), 'blockatm-guard')
+
 def get_run_dir():
     os_name = platform.system()
     if os_name == OSName.OS_WINDOWS:
@@ -21,6 +28,9 @@ def get_run_dir():
     if 'python' in os.path.basename(executable_file):
         return '.'
     
+    #return os.path.dirname(sys.argv[0]).rsplit('/', 3)[0]
+    #return os.path.abspath(os.path.dirname(__file__).rsplit('/', 1)[0])
+    #return os.path.dirname(sys.executable).rsplit('/', 3)[0]
     return os.path.dirname(executable_file)
     #return os.path.join(os.path.dirname(sys.executable), "../../..")
 
@@ -37,7 +47,7 @@ def check_free_port(port):
     檢測ip端口是否空閒
     """
     os_name = platform.system()
-    print(f'current os = {os_name}')
+    #print(f'current os = {os_name}')
     if os_name == OSName.OS_WINDOWS:
         cmd = f'netstat -aon|findstr "{port}"'
     elif os_name == OSName.OS_MAC:
@@ -95,3 +105,27 @@ def check_amount(value : str):
         return True
     except Exception:
         return False
+
+def compare_version(version1 : str, version2 : str)->int:
+    """
+    版本比較
+    return: 0-相同, 1-version1大, -1-version1小
+    """
+    if version1 == version2:
+        return 0
+    
+    v1 = version1.split('.')
+    v2 = version2.split('.')
+
+    # 取最小長度
+    lent = len(v1) if len(v1) < len(v2) else len(v2)
+
+    for i in range(0, lent):
+        if int(v1[i]) == int(v2[i]):
+            continue
+        elif int(v1[i]) > int(v2[i]):
+            return 1
+        else:
+            return -1
+    
+    

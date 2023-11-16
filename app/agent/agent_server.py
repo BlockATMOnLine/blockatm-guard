@@ -66,7 +66,7 @@ class CryptoRoute(APIRoute):
 
 class AgentServer():
 
-    def run(self, host : str, port : int, config : dict, process_token : str):
+    def run(self, host : str, port : int, config : dict, front_version : str, process_token : str):
         # 初始化日誌
         # if VERSION_TYPE == VersionType.VT_RELEASE:
         #     Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
@@ -79,7 +79,7 @@ class AgentServer():
         self._host = host
         self._port = port
         self._process_toke = process_token
-        AppCache().init(self._private_key, self._public_key, config)
+        AppCache().init(self._private_key, self._public_key, config, front_version)
 
         Logger().logger.debug(f'private_key = {self._private_key}')
         Logger().logger.debug(f'public_key = {self._public_key}')

@@ -10,7 +10,7 @@ from db.table import TableAgentHistoryOrder
 from core.exceptions import Exceptions
 from core.setting import REPORT_EXCEL_FILE_NAME, REPORT_EXCEL_SAVE_FOLDER
 from utils.cache import AppCache
-from utils.tool import timestamp_to_datetime_str, get_run_dir
+from utils.tool import timestamp_to_datetime_str, get_work_dir
 
 class APIOrderDownloadReport():
 
@@ -94,7 +94,7 @@ class APIOrderDownloadReport():
             Logger().logger.debug(f'df = {df}')
             
             # 創建目錄
-            dir = f"{get_run_dir()}/{REPORT_EXCEL_SAVE_FOLDER}"
+            dir = os.path.join(get_work_dir(), REPORT_EXCEL_SAVE_FOLDER)
             if(os.path.exists(dir) == False):
                 os.makedirs(dir)
 

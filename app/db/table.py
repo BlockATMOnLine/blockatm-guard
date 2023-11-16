@@ -51,6 +51,7 @@ class TableAgentConfig(TableBase):
     config : str = None
     update_time : int = None
     aes_key : str = None
+    front_version : str = None
 
 # 操作日誌表
 class TableAgentOperateLog(TableBase):

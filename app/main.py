@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import os
 import sys
 import time
 import threading
@@ -12,7 +13,7 @@ import platform
 from db.sqlitedb import SQLiteDB
 from db.table import TableAgentConfig
 from utils.logger import Logger
-from utils.tool import get_free_port, OSName, get_run_dir
+from utils.tool import get_free_port, OSName, get_work_dir
 from utils.crypto_engine import AESEngine
 from core.config import VERSION_TYPE
 from core.setting import VersionType
@@ -94,11 +95,16 @@ def push_log_out(host : str, port : int):
 def main():
     try:
         # 初始化日誌
-        if VERSION_TYPE == VersionType.VT_RELEASE:
-            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
-        else:
-            Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='debug')
+        # log_level = 'debug'
+        # if VERSION_TYPE == VersionType.VT_RELEASE:
+        #     log_level = 'info'
         
+        log_level = 'info'
+        if platform.system() == OSName.OS_WINDOWS:
+            Logger().init('blockatm-guard', './logs', level=log_level)
+        else:
+            Logger().init('blockatm-guard', os.path.join(get_work_dir(), 'logs'), level=log_level)
+
         Logger().logger.info("-----------------------------------------------------------")
         Logger().logger.info("blockatm-guard start")
 
@@ -115,6 +121,7 @@ def main():
             
         table = TableAgentConfig().assignment(data_list[0])
         config = json.loads(table.config)
+        front_version = table.front_version
         
         if not config:
             Logger().logger.error(f'confg is null! close app')
@@ -122,7 +129,7 @@ def main():
         Logger().logger.debug(f'config = {config}')
         
         # 啟動server
-        thread_server = threading.Thread(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'process_token':process_token})
+        thread_server = threading.Thread(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'front_version':front_version, 'process_token':process_token})
         thread_server.setDaemon(True)
         thread_server.start()
 

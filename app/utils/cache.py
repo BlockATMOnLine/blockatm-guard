@@ -9,8 +9,9 @@ class AppCache():
             cls._instance = object.__new__(cls, *args, **kw)
         return cls._instance
     
-    def init(self, private_key : str, public_key : str, config : dict = None):
+    def init(self, private_key : str, public_key : str, config : dict, front_version : str):
         self._config = config
+        self._front_version = front_version
         self._private_key = private_key
         self._public_key = public_key
         
@@ -34,6 +35,9 @@ class AppCache():
     def get_public_key(self):
         return self._public_key
 
+    def get_front_version(self):
+        return self._front_version
+
     def get_network_contract_address(self, network : str):
         return self._config.get('address', {}).get(network, {}).get('contract_address', '')
     
@@ -43,12 +47,8 @@ class AppCache():
     def get_network_list(self):
         return self._config.get('address', {}).keys()
     
-    def get_network_list_include_chainid(self):
-        data_list = []
-        for k, v in self._config.get('address', {}).items():
-            data_list.append({'network':k, 'chainid':v.get('chainid','')})
-        
-        return data_list
+    def get_network_info(self)->dict:
+        return self._config.get('address', {})
     
     def get_network_google_auth_key(self, network : str):
         return self._config.get('address', {}).get(network, {}).get('google_auth_key', [])

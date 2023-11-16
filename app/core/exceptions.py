@@ -48,8 +48,8 @@ class Exceptions():
                                    "訂單日期格式不正确, 請檢查後重新上传", "订单日期格式不正确, 请检查后重新上传"])
     ERR_EXCEL_PASSWORD = ExValue([324, "The excel file password error. Please enter correct password.", 
                                    "Excel文件密碼錯误, 請輸入正確的密码", "Excel文件密码错误, 请输入正确的密码"])
-    RR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY = ExValue([325, 'The uploaded order(s) number already exists in history orders. Please double-check and re-upload the orders. ', 
-                                 ' 上傳訂單號已經存在與歷史訂单, 請檢查後重新上傳', '上传订单号已经存在与历史订单, 请检查后重新上传'])
+    ERR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY = ExValue([325, 'The uploaded order(s) number already exists in history orders. Please double-check and re-upload the orders. ', 
+                                 '上傳訂單號已經存在與歷史訂单, 請檢查後重新上傳', '上传订单号已经存在与历史订单, 请检查后重新上传'])
 
     
 
