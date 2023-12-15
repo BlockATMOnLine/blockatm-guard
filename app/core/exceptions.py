@@ -32,9 +32,9 @@ class Exceptions():
     ERR_GOOGLE_AUTH = ExValue([314, 'Google authentication failed, please try again.', 'Google驗證失敗, 請重試', 'Google验证失败, 请重试']) 
     ERR_CONTRACT_ADDRESS_NULL = ExValue([315, 'Contract address does not exist', '合約地址不存在', '合约地址不存在'])
     ERR_UPLOAD_ORDER_NO_EXIST = ExValue([316, 'The uploaded order(s) number already exists. Please double-check and re-upload the orders. ', 
-                                 ' 上傳訂單號已經存在, 請檢查後重新上傳', '上传订单号已 经存在, 请检查后重新上传'])
+                                 ' 上傳訂單號已經存在, 請檢查後重新上傳', '上传订单号已经存在, 请检查后重新上传'])
     ERR_UPLOAD_NETWORK_NO_MATCH = ExValue([317, 'The uploaded order(s) does not match the network. Please switch network and upload it again.', 
-                                   '上傳訂單有與網絡不匹配的, 請轉換路網後再上傳', '上 传订单有与网络不匹配的，请切换网络后再上传'])
+                                   '上傳訂單有與網絡不匹配的, 請轉換路網後再上傳', '上传订单有与网络不匹配的，请切换网络后再上传'])
     ERR_UPLOAD_VALUES_HAVE_CHAR = ExValue([318, "The uploaded data contains the '|' character. Please remove it and upload again.", 
                                    "上傳資料包含 '|' 字元, 請移除後重新上傳", "上传资料包含 '|' 字 符, 请移除后重新上传"])
     ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER = ExValue([319, "The amount field is not a number or floating point number. Please double-check and re-upload the orders.", 
@@ -49,8 +49,15 @@ class Exceptions():
     ERR_EXCEL_PASSWORD = ExValue([324, "The excel file password error. Please enter correct password.", 
                                    "Excel文件密碼錯误, 請輸入正確的密码", "Excel文件密码错误, 请输入正确的密码"])
     ERR_UPLOAD_ORDER_NO_EXIST_IN_HISTORY = ExValue([325, 'The uploaded order(s) number already exists in history orders. Please double-check and re-upload the orders. ', 
-                                 '上傳訂單號已經存在與歷史訂单, 請檢查後重新上傳', '上传订单号已经存在与历史订单, 请检查后重新上传'])
-
-    
-
+                                 ' 上傳訂單號已經存在與歷史訂单, 請檢查後重新上傳', '上传订单号已经存在与历史订单, 请检查后重新上传'])
+    ERR_UPLOAD_ORDER_NO_LEN_LIMIT_30 = ExValue([326, "The order no field cannot exceed 30 characters. Please double-check and re-upload the orders.", 
+                                   "上傳訂單號長度不能超過30個字符, 請檢查後重新上传", "上传订单号长度不能超过30个字符, 请检查后重新上传"])
+    ERR_UPLOAD_BUSINESS_NAME_LEN_LIMIT_30 = ExValue([327, "The business name field cannot exceed 30 characters. Please double-check and re-upload the orders.", 
+                                   "上傳業務名称長度不能超過30個字符, 請檢查後重新上传", "上传业务名称长度不能超过30个字符, 请检查后重新上传"])
+    ERR_UPLOAD_ORDER_NO_CONTAIN_POINT_CHAR = ExValue([328, "The order no cannot contain the '.' character. Please double-check and re-upload the orders.", 
+                                   "上傳訂單號不能含有'.'字符, 請檢查後重新上传", "上传订单号不能含有'.'字符, 请检查后重新上传"])
+    ERR_UPLOAD_BUSINESS_NAME_CONTAIN_POINT_CHAR = ExValue([329, "The business name cannot contain the '.' character. Please double-check and re-upload the orders.", 
+                                   "上傳業務名称不能含有'.'字符, 請檢查後重新上传", "上传业务名称不能含有'.'字符, 请检查后重新上传"])
+    ERR_UPLOAD_ORDER_NO_EMPTY = ExValue([330, "The order number cannot be empty. Please double-check and re-upload the orders.", 
+                                   "訂單號不能為空, 請檢查後重新上传", "订单号不能为空, 请检查后重新上传"])
     

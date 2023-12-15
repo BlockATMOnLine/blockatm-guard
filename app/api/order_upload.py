@@ -6,6 +6,7 @@ import time
 import traceback
 import msoffcrypto
 import pandas
+import math
 from msoffcrypto.exceptions import InvalidKeyError
 from typing import Optional, List
 from pydantic import BaseModel, Field
@@ -63,6 +64,8 @@ class APIOrderUpload():
                     return Exceptions.ERR_READ_EXCEL_ERROR
                 elif res == 3:
                     return Exceptions.ERR_UPLOAD_VALUES_ORDER_DATE_FORMAT
+                elif res == 4:
+                    return Exceptions.ERR_UPLOAD_ORDER_NO_EMPTY
                 
                 return Exceptions.ERR_READ_EXCEL_ERROR
             
@@ -70,6 +73,11 @@ class APIOrderUpload():
 
             # 檢驗order數據
             for upload_order in upload_order_list:
+
+                # 訂單號和業務名稱不能同時為空
+                if not upload_order.order_no:
+                    Logger().logger.error("order no cannot be empty")
+                    return Exceptions.ERR_UPLOAD_ORDER_NO_EMPTY
                 
                 if upload_order.network != AppCache().get_login_network():
                     Logger().logger.error("order network not match current login network")
@@ -82,6 +90,26 @@ class APIOrderUpload():
                 if not check_amount(upload_order.amount):
                     Logger().logger.error('amount field is not a number or floating point number')
                     return Exceptions.ERR_UPLOAD_VALUES_AMOUNT_NOT_NUMBER
+                
+                # 訂單號不能超過30個字符
+                if len(upload_order.order_no) > 30:
+                    Logger().logger.error('The order no field cannot exceed 30 characters')
+                    return Exceptions.ERR_UPLOAD_ORDER_NO_LEN_LIMIT_30
+
+                # 業務名稱不能超過30個字符
+                if len(upload_order.biz_name) > 30:
+                    Logger().logger.error('The business name field cannot exceed 30 characters')
+                    return Exceptions.ERR_UPLOAD_BUSINESS_NAME_LEN_LIMIT_30
+                
+                # 訂單號不能含有'.'字符
+                if '.' in upload_order.order_no:
+                    Logger().logger.error('The order no cannot contain the . character')
+                    return Exceptions.ERR_UPLOAD_ORDER_NO_CONTAIN_POINT_CHAR
+
+                # 業務名稱不能含有'.'字符
+                if '.' in upload_order.biz_name:
+                    Logger().logger.error('The business name cannot contain the . characters')
+                    return Exceptions.ERR_UPLOAD_BUSINESS_NAME_CONTAIN_POINT_CHAR
                 
                 # 校驗錢包地址格式
                 if NetWorkType.NWT_ETH == AppCache().get_login_network():
@@ -149,6 +177,9 @@ class APIOrderUpload():
                 
                 table_order.biz_name = str(line[1])
                 table_order.order_no = str(line[2])
+                if isinstance(line[2], float) and math.isnan(line[2]):
+                    Logger().logger.error('order no is nan')
+                    return 4
                 Logger().logger.info(f'type uid = {type(line[3])}, value = {line[3]}')
                 table_order.uid = str(line[3])
                 table_order.network = str(line[4])

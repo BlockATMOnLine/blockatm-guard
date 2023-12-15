@@ -41,9 +41,13 @@ class APIOrderQueryWait():
     @staticmethod
     def handle_request():
         try:
+            out_time = int(time.time()) - 30 * 24 * 3600
+            # 刪除導入日誌超過1個月的訂單
+            Logger().logger.info('delete improt time out order!')
+            SQLiteDB().delete(TableAgentOrder._table_name, [f'import_date < {out_time}'])
+
             # 查詢訂單
-            order_date_outtime = int(time.time()) - 30 * 24 * 3600
-            filter = ['status in (0,1,2)', 'is_del=0', f'order_date>{order_date_outtime}']
+            filter = ['status in (0,1,2)', 'is_del=0', f'import_date >= {out_time}']
             res_list = SQLiteDB().query(TableAgentOrder._table_name, filter, sort_field=['order_date'], desc=True)
 
             # 校驗數據結果

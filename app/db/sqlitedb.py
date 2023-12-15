@@ -161,7 +161,7 @@ class SQLiteDB():
     # 删除
     def delete_sql(self, sql : str):
         try:
-            Logger().logger.debug(f'sql = {sql}')
+            Logger().logger.info(f'sql = {sql}')
             return self.execute(sql)
 
         except Exception as err:
@@ -169,15 +169,20 @@ class SQLiteDB():
             return False
     
     # 删除
-    def delete(self, table : str, filter : dict):
+    def delete(self, table : str, filter : Union[list, dict]):
         try:
             filter_str = '1 = 1 '
             
-            for k, v in filter.items():
-                if isinstance(v, str):
-                    filter_str += f' and {k} = \'{v}\''
-                else:
-                    filter_str += f' and {k} = {v}'
+            if isinstance(filter, dict):
+                for k, v in filter.items():
+                    if isinstance(v, str):
+                        filter_str += f' and {k} = \'{v}\''
+                    else:
+                        filter_str += f' and {k} = {v}'
+
+            elif isinstance(filter, list):
+                for f in filter:
+                    filter_str += f' and {f}'
 
             sql = f'delete from {table} where {filter_str}'
 

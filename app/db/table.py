@@ -52,6 +52,7 @@ class TableAgentConfig(TableBase):
     update_time : int = None
     aes_key : str = None
     front_version : str = None
+    update_conf_url : str = None
 
 # 操作日誌表
 class TableAgentOperateLog(TableBase):
