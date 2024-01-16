@@ -66,7 +66,7 @@ class CryptoRoute(APIRoute):
 
 class AgentServer():
 
-    def run(self, host : str, port : int, config : dict, front_version : str, process_token : str):
+    def run(self, host : str, port : int, config : dict, front_version : str, network_info:dict, process_token : str):
         # 初始化日誌
         # if VERSION_TYPE == VersionType.VT_RELEASE:
         #     Logger().init('blockatm-guard', f'{get_run_dir()}/logs', level='info')
@@ -79,7 +79,7 @@ class AgentServer():
         self._host = host
         self._port = port
         self._process_toke = process_token
-        AppCache().init(self._private_key, self._public_key, config, front_version)
+        AppCache().init(self._private_key, self._public_key, config, front_version, network_info)
 
         Logger().logger.debug(f'private_key = {self._private_key}')
         Logger().logger.debug(f'public_key = {self._public_key}')
@@ -90,8 +90,8 @@ class AgentServer():
             self._app = FastAPI(title = 'Agnet WebServer', description = 'Agnet WebServer 接口文檔', version='v1.0.0')
         
         Logger().logger.info(f'get_run_dir = {get_run_dir()}')
-        self._app.mount("/static", StaticFiles(directory=f"{get_run_dir()}/static"), name="static")
-        self._templates = Jinja2Templates(directory=f"{get_run_dir()}/templates")
+        self._app.mount("/static", StaticFiles(directory=f"{get_run_dir()}/static/static"), name="static")
+        self._templates = Jinja2Templates(directory=f"{get_run_dir()}/static")
         self._app.router.route_class = CryptoRoute
 
         # api定義
@@ -217,13 +217,13 @@ class AgentServer():
         
         # 下載訂單模板
         @app.get(f"/v1/agent/order/download_order_template", tags=['訂單'], summary='下載訂單模板')
-        def order_download_template():
-            return APIOrderDownloadTemplate.handle_request()
+        def order_download_template(random : str):
+            return APIOrderDownloadTemplate.handle_request(random)
         
         # 下載報表
         @app.get("/v1/agent/order/download_order_report", tags=['訂單'], summary='下載訂單報表')
-        def order_download_report(time_start : int, time_end : int, payment_start:int, payment_end:int, order_no : str, crypto : str, network : str, amount_start : str, amount_end : str, uid : str, biz_name : str, wallet_address : str):
-            return APIOrderDownloadReport.handle_request(time_start, time_end, payment_start, payment_end, order_no, crypto, network, amount_start, amount_end, uid, biz_name, wallet_address)
+        def order_download_report(time_start : int, time_end : int, payment_start:int, payment_end:int, order_no : str, crypto : str, amount_start : str, amount_end : str, uid : str, biz_name : str, wallet_address : str):
+            return APIOrderDownloadReport.handle_request(time_start, time_end, payment_start, payment_end, order_no, crypto, amount_start, amount_end, uid, biz_name, wallet_address)
         
         # 查詢登錄日誌
         @app.get("/v1/agent/log/login_log", dependencies=[Depends(self.verify_header)], tags=['日誌'], response_model = APIQueryLoginLog.RespondArgs, summary='查詢登錄日誌')

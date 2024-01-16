@@ -15,7 +15,7 @@ from utils.tool import timestamp_to_datetime_str, get_work_dir
 class APIOrderDownloadReport():
 
     @staticmethod
-    def handle_request(time_start:int, time_end:int, payment_start:int, payment_end:int, order_no:str, crypto:str, network:str, amount_start:str, amount_end:str, uid:str, biz_name:str, wallet_address:str):
+    def handle_request(time_start:int, time_end:int, payment_start:int, payment_end:int, order_no:str, crypto:str, amount_start:str, amount_end:str, uid:str, biz_name:str, wallet_address:str):
         try:
 
             sql = f'''select * from {TableAgentHistoryOrder._table_name} where 1 = 1 '''
@@ -37,8 +37,11 @@ class APIOrderDownloadReport():
             if crypto:
                 sql += f' and crypto = \'{crypto}\''
             
-            if network:
-                sql += f' and network = \'{network}\''
+            # if AppCache.get_login_chain():
+            sql += f' and chainid = \'{AppCache().get_login_chain()}\''
+            
+            # if network:
+            #     sql += f' and network = \'{network}\''
             
             if amount_start:
                 sql += f' and cast(amount as decimal(18,12)) >= {amount_start}'
@@ -73,7 +76,7 @@ class APIOrderDownloadReport():
                 table_order.assignment(db_res)
 
                 # network篩選
-                if table_order.network != AppCache().get_login_network():
+                if table_order.chainid != AppCache().get_login_chain():
                     continue
 
                 execel_data['Date of Order'].append(timestamp_to_datetime_str(table_order.order_date, '%d-%m/%Y %H:%M'))

@@ -53,6 +53,7 @@ class TableAgentConfig(TableBase):
     aes_key : str = None
     front_version : str = None
     update_conf_url : str = None
+    network_info : str = None
 
 # 操作日誌表
 class TableAgentOperateLog(TableBase):
@@ -83,6 +84,7 @@ class TableAgentOrder(TableBase):
     order_date : int = None
     import_date : int = None
     crypto : str = None
+    chainid : str = None
     network : str = None
     wallet_address : str = None
     amount : str = None
@@ -101,6 +103,7 @@ class TableAgentHistoryOrder(TableBase):
     import_date : int = None
     finish_date : int = None
     crypto : str = None
+    chainid : str = None
     network : str = None
     wallet_address : str = None
     amount : str = None

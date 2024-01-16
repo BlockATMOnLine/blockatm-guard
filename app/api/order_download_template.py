@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 import traceback
+import os
+import time
 from typing import List
 from pydantic import BaseModel, Field
 from fastapi.responses import FileResponse
@@ -13,14 +15,17 @@ from utils.cache import AppCache
 class APIOrderDownloadTemplate():
     
     @staticmethod
-    def handle_request():
+    def handle_request(random : str):
         try:
-            if AppCache().get_login_network() == "Tron":
-                file_path = f'{get_run_dir()}/templates/Bulk Payout Template_TRON.xlsx'
-                filename = 'Bulk Payout Template_TRON.xlsx'
-            else:
-                file_path = f'{get_run_dir()}/templates/Bulk Payout Template_ETH.xlsx'
-                filename = 'Bulk Payout Template_ETH.xlsx'
+            login_chainid:str = AppCache().get_login_chain()
+            login_network:str = AppCache().get_chain_network(login_chainid)
+            
+            Logger().logger.info(f'random = {random}, login_chainid = {login_chainid}, login_network = {login_network}')
+            
+            filename = f'BlockTemplate_{login_network.replace(" ", "")}.xlsx'
+            file_path = f'{get_run_dir()}/templates/BlockTemplate_ChainID_{login_chainid}.xlsx'
+
+            Logger().logger.info(f'file_path = {file_path}, filename = {filename}')
 
             Logger().logger.info("download order template")
             return FileResponse(path=file_path, filename=filename)

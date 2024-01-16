@@ -28,7 +28,7 @@ class APIVerifyGoogleAuth():
             is_success = False
 
             # 校驗
-            google_auth_key = AppCache().get_network_google_auth_key(AppCache().get_login_network())
+            google_auth_key = AppCache().get_chain_google_auth_key(AppCache().get_login_chain())
             if not pyotp.TOTP(google_auth_key).verify(args.verify_code):
                 Logger().logger.error("google authentication fail")
 

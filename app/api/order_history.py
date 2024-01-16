@@ -20,7 +20,8 @@ class APIOrderHistory():
         payment_end : int = Field(examples=[1695815749], description='支付時間，秒級時間戳，沒有填0')
         order_no : str= Field(examples=['165277554525515'], description='訂單號')
         crypto : str= Field(examples=['USDT'], description='數字幣code')
-        network : str = Field(examples=['Ethereum'], description='數字幣網絡')
+        #chainid : str = Field(examples=['5'],description='链路')
+        #network : str = Field(examples=['Ethereum'], description='數字幣網絡')
         amount_start : str= Field(examples=['32.22'], description='訂單金額最小值，沒有填0')
         amount_end : str= Field(examples=['32.22'], description='訂單金額範圍最大值，沒有填0')
         uid : str= Field(examples=['00000012'], description='')
@@ -39,6 +40,7 @@ class APIOrderHistory():
                 import_date : int = Field(examples=[1695815749],description='導入時間，秒級時間戳')
                 finish_date : int = Field(examples=[1695815749],description='完成時間，秒級時間戳')
                 crypto : str = Field(examples=['USDT'],description='數字幣code')
+                chainid : str = Field(examples=['5'],description='链路')
                 network : str = Field(examples=['Ethereum'],description='數字幣網絡')
                 wallet_address : str = Field(examples=['0x54F5D'],description='收款地址')
                 amount : str = Field(examples=['33.20'],description='訂單金額')
@@ -75,9 +77,12 @@ class APIOrderHistory():
             
             if args.crypto:
                 sql += f' and crypto = \'{args.crypto}\''
-            
-            if args.network:
-                sql += f' and network = \'{args.network}\''
+
+            #if args.chainid:
+            sql += f' and chainid = \'{AppCache().get_login_chain()}\''
+
+            # if args.network:
+            #     sql += f' and network = \'{args.network}\''
             
             if args.amount_start:
                 sql += f' and cast(amount as decimal(18,12)) >= {args.amount_start}'
@@ -111,7 +116,7 @@ class APIOrderHistory():
                 order.assignment(db_res)
 
                 # network篩選
-                if order.network != AppCache().get_login_network():
+                if order.chainid != AppCache().get_login_chain():
                     continue
                 
                 order = APIOrderHistory.RespondArgs.Data.Order(**order.to_dict())

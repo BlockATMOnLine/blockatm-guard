@@ -23,6 +23,7 @@ class APIOrderQueryWait():
                 order_date : int = Field(examples=[1695815749],description='訂單時間，秒級時間戳')
                 import_date : int = Field(examples=[1695815749],description='導入時間，秒級時間戳')
                 crypto : str = Field(examples=['USDT'],description='數字幣code')
+                chainid : str = Field(examples=['5'],description='链路')
                 network : str = Field(examples=['Ethereum'],description='數字幣網絡')
                 wallet_address : str = Field(examples=['0x54F5D'],description='收款地址')
                 amount : str = Field(examples=['33.20'],description='訂單金額')
@@ -60,7 +61,7 @@ class APIOrderQueryWait():
                 table_order.assignment(res)
 
                 # network篩選
-                if table_order.network != AppCache().get_login_network():
+                if table_order.chainid != AppCache().get_login_chain():
                     continue
 
                 order = APIOrderQueryWait.RespondArgs.Data.Order(**table_order.to_dict())

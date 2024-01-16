@@ -38,6 +38,7 @@ class APIOrderPaySuccess():
                 table_his_order.import_date : int = table_order.import_date
                 table_his_order.finish_date : int = int(time.time())
                 table_his_order.crypto : str = table_order.crypto
+                table_his_order.chainid : str = table_order.chainid
                 table_his_order.network : str = table_order.network
                 table_his_order.wallet_address : str = table_order.wallet_address
                 table_his_order.amount : str = table_order.amount

@@ -6,8 +6,8 @@ VSVersionInfo(
   ffi=FixedFileInfo(
 # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
 # Set not needed items to zero 0.
-filevers=(3, 0, 4, 0),
-prodvers=(3, 0, 4, 0),
+filevers=(1, 0, 1, 0),
+prodvers=(1, 0, 1, 0),
 # Contains a bitmask that specifies the valid bits 'flags'r
 mask=0x3f,
 # Contains a bitmask that specifies the Boolean attributes of the file.
@@ -31,12 +31,12 @@ StringFileInfo(
     u'040904B0',
     [StringStruct(u'CompanyName', u'BlockATM'),
     StringStruct(u'FileDescription', u'BlockATM'),
-    StringStruct(u'FileVersion', u'3.0.4'),
+    StringStruct(u'FileVersion', u'1.0.1'),
     StringStruct(u'InternalName', u'blockatm-guard'),
     StringStruct(u'LegalCopyright', u'Copyright (c) BlockATM'),
     StringStruct(u'OriginalFilename', u'blockatm-guard.exe'),
     StringStruct(u'ProductName', u'blockatm-guard'),
-    StringStruct(u'ProductVersion', u'3.0.4')])
+    StringStruct(u'ProductVersion', u'1.0.1')])
   ]),
 VarFileInfo([VarStruct(u'Translation', [1033, 1200])]) 
   ]

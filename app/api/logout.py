@@ -24,6 +24,8 @@ class APILogout():
             if AppCache().get_token():
                 SQLiteDB().update(TableAgentLoginLog._table_name, {'token':AppCache().get_token()}, {'logout_time':int(time.time())})
             
+            AppCache().reinit()
+            
             return Exceptions.ERR_OK
 
         except Exception as err:

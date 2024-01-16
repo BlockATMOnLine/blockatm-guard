@@ -33,9 +33,9 @@ class APIInit():
         try:
             
             network_list = []
-            for k, v in AppCache().get_network_info().items():
-                network_chain = APIInit.RespondArgs.Data.NetWorkChain(network = k, 
-                                                                      chainid = v['chainid'], 
+            for k, v in AppCache().get_chain_info().items():
+                network_chain = APIInit.RespondArgs.Data.NetWorkChain(network = v['network'], 
+                                                                      chainid = k, 
                                                                       contract_address = v['contract_address'],
                                                                       wallet_address = v['wallet_address'])
                 network_list.append(network_chain)

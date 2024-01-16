@@ -126,6 +126,7 @@ def main():
         table = TableAgentConfig().assignment(data_list[0])
         config = json.loads(table.config)
         front_version = table.front_version
+        network_info = json.loads(table.network_info)
         
         if not config:
             Logger().logger.error(f'confg is null! close app')
@@ -133,7 +134,7 @@ def main():
         Logger().logger.debug(f'config = {config}')
         
         # 啟動server
-        thread_server = threading.Thread(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'front_version':front_version, 'process_token':process_token})
+        thread_server = threading.Thread(target=AgentServer().run, kwargs={'host' : host, 'port' : port, 'config':config, 'front_version':front_version, 'network_info':network_info, 'process_token':process_token})
         thread_server.setDaemon(True)
         thread_server.start()
 

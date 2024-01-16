@@ -14,7 +14,8 @@ from utils.cache import AppCache
 class APILogin():
     # 請求參數
     class RequestArgs(BaseModel):
-        network : str = Field(examples=['Torn'],description='網絡')
+        chainid : str = Field(examples=['5'],description='链路')
+        # network : str = Field(examples=['Torn'],description='網絡')
         wallet_address : str = Field(examples=['TCXJJvq1F8YHN5uXs4UhTUmN8RFUxs2Zd2'],description='錢包地址')
         
     # 回覆參數
@@ -35,16 +36,16 @@ class APILogin():
             Logger().logger.debug(f'login: args = {args}')
 
             # 判斷network是否能登錄
-            if args.network not in AppCache().get_network_list():
-                Logger().logger.error('network not support!')
-                return Exceptions.ERR_WALLET_ADDRESS_NOT_SUPPORT
+            if args.chainid not in AppCache().get_chain_list():
+                Logger().logger.error('chainid not support!')
+                return Exceptions.ERR_NETWORK_NOT_SUPPORT
             
             # 判斷wallet_address是否能登錄
-            if args.wallet_address not in AppCache().get_network_wallet_address(args.network):
+            if args.wallet_address not in AppCache().get_chain_wallet_address(args.chainid):
                 Logger().logger.error('this wallet address can not login!')
                 return Exceptions.ERR_WALLET_ADDRESS_NOT_SUPPORT
                 
-            contract_address = AppCache().get_network_contract_address(args.network)
+            contract_address = AppCache().get_chain_contract_address(args.chainid)
             if not contract_address:
                 Logger().logger.error('this wallet address can not login!')
                 return Exceptions.ERR_CONTRACT_ADDRESS_NULL
@@ -57,7 +58,7 @@ class APILogin():
             token = str(uuid.uuid4())
             AppCache().reinit()
             AppCache().set_token(token)
-            AppCache().set_login_network(args.network)
+            AppCache().set_login_chain(args.chainid)
             AppCache().set_login_wallet_address(args.wallet_address)
 
             is_success = True

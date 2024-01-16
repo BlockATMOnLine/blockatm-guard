@@ -34,6 +34,7 @@ class APIOrderUpload():
                 order_date : int = Field(examples=[1695815749],description='訂單時間，秒級時間戳')
                 import_date : int = Field(examples=[1695815749],description='導入時間，秒級時間戳')
                 crypto : str = Field(examples=['USDT'],description='數字幣code')
+                chainid : str = Field(examples=['5'],description='链路')
                 network : str = Field(examples=['Ethereum'],description='數字幣網絡')
                 wallet_address : str = Field(examples=['0x54F5D'],description='收款地址')
                 amount : str = Field(examples=['33.20'],description='訂單金額')
@@ -79,9 +80,9 @@ class APIOrderUpload():
                     Logger().logger.error("order no cannot be empty")
                     return Exceptions.ERR_UPLOAD_ORDER_NO_EMPTY
                 
-                if upload_order.network != AppCache().get_login_network():
-                    Logger().logger.error("order network not match current login network")
-                    return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
+                # if upload_order.chainid != AppCache().get_login_chain():
+                #     Logger().logger.error("order network not match current login network")
+                #     return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
                 
                 if '|' in upload_order.biz_name+upload_order.order_no+upload_order.uid+upload_order.network+upload_order.wallet_address+upload_order.amount+upload_order.crypto:
                     Logger().logger.error("uploaded data contains the '|' character")
@@ -111,16 +112,35 @@ class APIOrderUpload():
                     Logger().logger.error('The business name cannot contain the . characters')
                     return Exceptions.ERR_UPLOAD_BUSINESS_NAME_CONTAIN_POINT_CHAR
                 
-                # 校驗錢包地址格式
-                if NetWorkType.NWT_ETH == AppCache().get_login_network():
-                    if not re.match(NetWorkRegular.NWR_ETH, upload_order.wallet_address):
-                        Logger().logger.error('wallet address format error')
-                        return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
+                # 校驗網絡
+                chainid, regular = AppCache().get_info_by_network(upload_order.network)
+                if not chainid or not regular:
+                    Logger().logger.error('order network not match current login network')
+                    return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
                 
-                if NetWorkType.NWT_TRON == AppCache().get_login_network():
-                    if not re.match(NetWorkRegular.NWR_TRON, upload_order.wallet_address):
-                        Logger().logger.error('wallet address format error')
-                        return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
+                Logger().logger.info(f'chainid = {chainid}, regular = {regular}, login_chainid = {AppCache().get_login_chain()}')
+                
+                if chainid != AppCache().get_login_chain():
+                    Logger().logger.error('order network not match current login network')
+                    return Exceptions.ERR_UPLOAD_NETWORK_NO_MATCH
+                
+                upload_order.chainid = chainid
+                
+                # 校驗錢包地址格式
+                if not re.match(regular, upload_order.wallet_address):
+                    Logger().logger.error('wallet address format error')
+                    return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
+                
+                # 校驗錢包地址格式
+                # if NetWorkType.NWT_ETH == AppCache().get_login_network():
+                #     if not re.match(NetWorkRegular.NWR_ETH, upload_order.wallet_address):
+                #         Logger().logger.error('wallet address format error')
+                #         return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
+                
+                # if NetWorkType.NWT_TRON == AppCache().get_login_network():
+                #     if not re.match(NetWorkRegular.NWR_TRON, upload_order.wallet_address):
+                #         Logger().logger.error('wallet address format error')
+                #         return Exceptions.ERR_UPLOAD_VALUES_WALLET_ADDRESS_FORMAT
                 
                 res_list = SQLiteDB().query(TableAgentOrder._table_name, filter={'order_no':upload_order.order_no})
                 Logger().logger.info(f'res_list = {res_list}')

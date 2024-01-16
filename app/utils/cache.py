@@ -9,14 +9,16 @@ class AppCache():
             cls._instance = object.__new__(cls, *args, **kw)
         return cls._instance
     
-    def init(self, private_key : str, public_key : str, config : dict, front_version : str):
+    def init(self, private_key : str, public_key : str, config : dict, front_version : str, network_info:dict):
         self._config = config
         self._front_version = front_version
+        self._network_info = network_info
+
         self._private_key = private_key
         self._public_key = public_key
         
         self._token = None
-        self._login_network = None
+        self._login_chainid = None
         self._login_wallet_address = None
         self._is_google_auth = False
     
@@ -25,7 +27,7 @@ class AppCache():
 
     def reinit(self):
         self._token = None
-        self._login_network = None
+        self._login_chainid = None
         self._login_wallet_address = None
         self._is_google_auth = False
 
@@ -38,20 +40,25 @@ class AppCache():
     def get_front_version(self):
         return self._front_version
 
-    def get_network_contract_address(self, network : str):
-        return self._config.get('address', {}).get(network, {}).get('contract_address', '')
+    def get_chain_contract_address(self, chainid : str):
+        return self._config.get('address', {}).get(chainid, {}).get('contract_address', '')
     
-    def get_network_wallet_address(self, network : str):
-        return self._config.get('address', {}).get(network, {}).get('wallet_address', [])
+    def get_chain_wallet_address(self, chainid : str):
+        return self._config.get('address', {}).get(chainid, {}).get('wallet_address', [])
     
-    def get_network_list(self):
+    def get_chain_network(self, chainid):
+        return self._config.get('address', {}).get(chainid, {}).get('network', [])
+    # def get_network_list(self):
+    #     return self._config.get('address', {}).keys()
+    
+    def get_chain_list(self):
         return self._config.get('address', {}).keys()
     
-    def get_network_info(self)->dict:
+    def get_chain_info(self)->dict:
         return self._config.get('address', {})
     
-    def get_network_google_auth_key(self, network : str):
-        return self._config.get('address', {}).get(network, {}).get('google_auth_key', [])
+    def get_chain_google_auth_key(self, chainid : str):
+        return self._config.get('address', {}).get(chainid, {}).get('google_auth_key', [])
     
     def set_token(self, token : str):
         self._token = token
@@ -65,11 +72,11 @@ class AppCache():
     def get_login_wallet_address(self):
         return self._login_wallet_address
         
-    def set_login_network(self, network):
-        self._login_network = network
+    def set_login_chain(self, chainid):
+        self._login_chainid = chainid
     
-    def get_login_network(self):
-        return self._login_network
+    def get_login_chain(self):
+        return self._login_chainid
         
     def set_google_auth(self):
         self._is_google_auth = True
@@ -77,3 +84,11 @@ class AppCache():
     def get_google_auth(self):
         return self._is_google_auth
     
+    # {'5': {'network':'Ethereum Goerli'}}
+    def get_info_by_network(self, network : str):
+
+        for k, v in self._network_info.items():
+            if v.get('network') == network:
+                return k, v.get('regular')
+        
+        return False, False
